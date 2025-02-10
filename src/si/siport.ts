@@ -1,6 +1,5 @@
-/// <reference path="./serialport.d.ts" />
-import * as SerialPort from 'serialport';
-import * as moment from 'moment';
+import SerialPort from 'serialport';
+import moment from 'moment';
 import { EventEmitter } from 'events';
 
 import {
@@ -8,16 +7,16 @@ import {
     MSG_STARTUP_SEQUENCE, NAK,
     SET_MASTER_MODE, SI_CARD_8_PLUS_DETECTED, GET_SI_CARD_8_PLUS_BN,
     SI_CARD_5_DETECTED, GET_SI_CARD_5, SPORT_IDENT_VENDOR_ID
-} from './codes';
-import { Si8PlusDataFrame } from '../dataframe/Si8PlusDataFrame';
-import { Si5DataFrame } from '../dataframe/Si5DataFrame';
-import { SiMessage, buildWireMessage, decodeWireMessage, toDebugString } from './simessage';
-import { SiPortId, SiEvent, SiPortDetectedMode } from '../opensportident';
+} from './codes.js';
+import { Si8PlusDataFrame } from '../dataframe/Si8PlusDataFrame.js';
+import { Si5DataFrame } from '../dataframe/Si5DataFrame.js';
+import { SiMessage, buildWireMessage, decodeWireMessage, toDebugString } from './simessage.js';
+import { SiPortId, SiEvent, SiPortDetectedMode } from '../../opensportident.js';
 import { SI_CARD_REMOVED, GET_SI_CARD_6_BN, SI_CARD_6_PLUS_DETECTED, GET_SYSTEM_VALUE, GET_SYSTEM_VALUE_CPC,
-         MASK_CPC_EXTENDED_PROTOCOL, MASK_CPC_AUTOSEND, GET_SYSTEM_VALUE_CARD6BLOCKS, DATA_SI3_CARD_10_PLUS_SERIES, MASK_CPC_HANDSHAKE } from './codes';
-import { SiDataFrame } from '../dataframe/SiDataFrame';
-import { Si6DataFrame } from '../dataframe/Si6DataFrame';
-import { DATA_SI2_CARD_6_STAR_SERIES, BN_SICARD_6_192, BN_SICARD_6, BN_SICARD_10PLUS, BN_SICARD_8_9 } from './codes';
+         MASK_CPC_EXTENDED_PROTOCOL, MASK_CPC_AUTOSEND, GET_SYSTEM_VALUE_CARD6BLOCKS, DATA_SI3_CARD_10_PLUS_SERIES, MASK_CPC_HANDSHAKE } from './codes.js';
+import { SiDataFrame } from '../dataframe/SiDataFrame.js';
+import { Si6DataFrame } from '../dataframe/Si6DataFrame.js';
+import { DATA_SI2_CARD_6_STAR_SERIES, BN_SICARD_6_192, BN_SICARD_6, BN_SICARD_10PLUS, BN_SICARD_8_9 } from './codes.js';
 
 export interface SiPortOptions {
     timeZero?: number;
@@ -31,13 +30,13 @@ export class SiPortReader {
     private options: SiPortOptions;
     private eventEmitter: EventEmitter;
     private receivedOpcodeMap: Map<number, (WireMessage) => void> = new Map();
-    private si6CardBlocks: number[];
+    private si6CardBlocks?: number[];
     private baudRate: number;
 
-    private isSiCard10Plus: boolean;
-    private isSiCard6Star: boolean;
-    private temp: SiMessage[];
-    private readCompleted: boolean;
+    private isSiCard10Plus?: boolean;
+    private isSiCard6Star?: boolean;
+    private temp?: SiMessage[];
+    private readCompleted?: boolean;
 
     constructor(portName: string, options?: SiPortOptions) {
         this.options = options || {};

@@ -1,5 +1,4 @@
-import * as moment from 'moment';
-import { listSiPorts } from './si/siport';
+import moment from 'moment';
 
 export const NO_TIME = -1;
 
@@ -8,22 +7,24 @@ export interface SiPunch {
 	timestampMs: number;
 }
 export class SiReadout {
-	siCardSeries: string;
-	siCardNumber: string;
-	checkTimestampMs: number;
-	startTimestampMs: number;
-	finishTimestampMs: number;
-	punches: SiPunch[];
+	siCardSeries: string | undefined;
+	siCardNumber: string | undefined;
+	checkTimestampMs: number | undefined;
+	startTimestampMs: number | undefined;
+	finishTimestampMs: number | undefined;
+	punches: SiPunch[] | undefined;
 
 	toDebugString(): string {
-		const start = this.formatTime(this.startTimestampMs);
-		const finish = this.formatTime(this.finishTimestampMs);
-		const check = this.formatTime(this.checkTimestampMs);
-		const count = this.punches.length;
+		const start = this.formatTime(this.startTimestampMs || 0);
+		const finish = this.formatTime(this.finishTimestampMs || 0);
+		const check = this.formatTime(this.checkTimestampMs || 0);
+		const count = this.punches ? this.punches.length : 0;
 		// const indenting = ' '.repeat(this.siCardSeries.length + 1);
 		let ret = `${this.siCardSeries}: ${this.siCardNumber} check(${check}) start(${start}) finish(${finish})`;
-		for (let i = 0; i < count; i++) {
-			ret += `\n    - ${i<9?' ':''}${i + 1}:${this.punches[i].controlCode} ${this.formatTime(this.punches[i].timestampMs)}`;
+		if (this.punches) {
+			for (let i = 0; i < count; i++) {
+				ret += `\n    - ${i<9?' ':''}${i + 1}:${this.punches[i].controlCode} ${this.formatTime(this.punches[i].timestampMs)}`;
+			}
 		}
 		return ret;
 	}
@@ -42,7 +43,7 @@ export interface SiPortId {
 	serialNumber: string;
 }
 export type SiEvent = 'open' | 'close' | 'readout' | 'error' | 'warning';
-export { SiPortReader, listSiPorts } from './si/siport';
+export { SiPortReader, listSiPorts } from './src/si/siport.js';
 
 export interface SiPortDetectedMode {
 	siCard6Punches: number;

@@ -1,15 +1,18 @@
 {
+    "extends": "@tsconfig/node22/tsconfig.json",
     "compilerOptions": {
-        "target": "es2015",
-        "lib": [
-            "es2015"
-        ],
-        "module": "commonjs",
-        "removeComments": true,
-        "sourceMap": true
+      /* Visit https://aka.ms/tsconfig to read more about this file */
+  
+      /* Projects */
+      // "composite": true,                                /* Enable constraints that allow a TypeScript project to be used with project references. */
+      /* Emit */
+      // "declaration": true,                              /* Generate .d.ts files from TypeScript and JavaScript files in your project. */
+      // "declarationMap": true,                           /* Create sourcemaps for d.ts files. */
+      "outDir": "./dist",                                   /* Specify an output folder for all emitted files. */
+      /* Modules */
+    //   "rootDir": "./",                                  /* Specify the root folder within your source files. */
+    //   "baseUrl": "."                                  /* Specify the base directory to resolve non-relative module names. */
     },
-    "compileOnSave": true,
-    "include": [
-        "**/*.ts"
-    ]
+    "include": ["src/**/*"],
+    "exclude": ["node_modules", "**/*.test.ts"]
 }

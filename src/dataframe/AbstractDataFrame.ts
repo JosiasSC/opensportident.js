@@ -3,40 +3,40 @@
  */
 import * as moment from 'moment';
 
-import { SiDataFrame } from './SiDataFrame';
-import { SiPunch, NO_TIME, SiReadout } from '../opensportident';
+import { SiDataFrame } from './SiDataFrame.js';
+import { SiPunch, NO_TIME, SiReadout } from '../../opensportident.js';
 export abstract class AbstractDataFrame implements SiDataFrame {
 
-	protected siNumber: string;
+	protected siNumber: string | undefined;
 
-	protected checkTime: number;
+	protected checkTime: number | undefined;
 
-	protected startTime: number;
+	protected startTime: number | undefined;
 
-	protected finishTime: number;
+	protected finishTime: number | undefined;
 
-	protected punches: SiPunch[];
+	protected punches: SiPunch[] | undefined;
 
 	abstract startingAt(zerohour: number): SiDataFrame;
 	abstract getSiSeries(): string;
 
-	public getSiNumber(): string {
+	public getSiNumber(): string | undefined {
 		return this.siNumber;
 	}
 
-	public getStartTime(): number {
+	public getStartTime(): number | undefined {
 		return this.startTime;
 	}
 
-	public getFinishTime(): number {
+	public getFinishTime(): number | undefined {
 		return this.finishTime;
 	}
 
-	public getCheckTime(): number {
+	public getCheckTime(): number | undefined {
 		return this.checkTime;
 	}
 
-	public getPunches(): SiPunch[] {
+	public getPunches(): SiPunch[] | undefined {
 		return this.punches;
 	}
 

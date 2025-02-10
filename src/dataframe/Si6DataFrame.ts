@@ -1,9 +1,9 @@
 /**
  * Copyright (c) 2013 Simon Denier
  */
-import { Si6PlusAbstractDataFrame } from './Si6PlusAbstractDataFrame';
-import { SiMessage } from '../si/simessage';
-import { SiPunch } from '../opensportident';
+import { Si6PlusAbstractDataFrame } from './Si6PlusAbstractDataFrame.js';
+import { SiMessage } from '../si/simessage.js';
+import { SiPunch } from '../../opensportident.js';
 const PAGE_SIZE = 16;
 const DOUBLE_WORD = 4;
 const NB_PUNCHES_INDEX = 1 * PAGE_SIZE + 2;

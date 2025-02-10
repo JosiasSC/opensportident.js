@@ -1,12 +1,18 @@
 /**
  * Copyright (c) 2013 Simon Denier
  */
-import { SiAbstractDataFrame, ONE_DAY, NO_SI_TIME, TWELVE_HOURS } from './SiAbstractDataFrame';
-import { SiMessage } from '../si/simessage';
-import { SiDataFrame } from './SiDataFrame';
-import { SiPunch } from '../opensportident';
+import { SiAbstractDataFrame, ONE_DAY, NO_SI_TIME, TWELVE_HOURS } from './SiAbstractDataFrame.js';
+import { SiMessage } from '../si/simessage.js';
+import { SiDataFrame } from './SiDataFrame.js';
+import { SiPunch } from '../../opensportident.js';
 
 export abstract class Si6PlusAbstractDataFrame extends SiAbstractDataFrame {
+
+	siNumber: string;
+	startTime: number | undefined;
+	finishTime: number | undefined;
+	checkTime: number | undefined;
+	punches: SiPunch[] | undefined;
 
 	public constructor(dataMessages: SiMessage[]) {
 		super();

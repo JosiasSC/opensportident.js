@@ -1,10 +1,9 @@
-import { SiPortReader, SiReadout, listSiPorts, SiPortId, SiPortDetectedMode } from './opensportident';
+import { SiPortReader, SiReadout, listSiPorts, SiPortId, SiPortDetectedMode } from './opensportident.js';
 
 listSiPorts((err, ports)  => {
     if (err) {
         console.error(err);
-    }
-    else {
+    } else {
         if (!ports.length) {
             console.error('No SPORTident device found');
         }
@@ -15,7 +14,7 @@ listSiPorts((err, ports)  => {
 
             siPort.on('open', (mode: SiPortDetectedMode) => console.log(`Connected to ${portId.comName} ${JSON.stringify(mode)})`));
             siPort.on('close', () => console.log(`Closed ${portId.comName} => ${portId.serialNumber}`));
-            siPort.on('error', err => console.error(`Error on ${portId.comName}: ${err}`));
+            siPort.on('error', (err: Error) => console.error(`Error on ${portId.comName}: ${err}`));
             siPort.on('warning', warn => console.error(`Warning on ${portId.comName}: ${warn}`));
             siPort.on('readout', (readout: SiReadout) => console.log(readout.toDebugString()));
             

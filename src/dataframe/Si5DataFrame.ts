@@ -1,14 +1,16 @@
 /**
  * Copyright (c) 2013 Simon Denier
  */
-import { SiAbstractDataFrame, TWELVE_HOURS } from './SiAbstractDataFrame';
-import { SiMessage } from '../si/simessage';
-import { SiDataFrame } from './SiDataFrame';
-import { SiPunch, NO_TIME } from '../opensportident';
+import { SiAbstractDataFrame, TWELVE_HOURS } from './SiAbstractDataFrame.js';
+import { SiMessage } from '../si/simessage.js';
+import { SiDataFrame } from './SiDataFrame.js';
+import { SiPunch, NO_TIME } from '../../opensportident.js';
 
 const SI5_TIMED_PUNCHES = 30;
 
 export class Si5DataFrame extends SiAbstractDataFrame {
+
+	siNumber: string;
 
 	public constructor(message: SiMessage) {
 		super();
@@ -16,19 +18,22 @@ export class Si5DataFrame extends SiAbstractDataFrame {
 		this.siNumber = this.extractSiNumber();
 	}
 
-	protected extractDataFrame(message: SiMessage): Uint8Array {
-		return message.payload.subarray(2);
+	protected extractDataFrame(message: SiMessage): Uint8Array | undefined {
+		if (message.payload) {
+			return message.payload.subarray(2);
+		}
 	}
 	protected extractSiNumber(): string {
 		let siNumber = this.wordAt(0x04);
 		let cns = this.byteAt(0x06);
-		if (cns > 0x01) {
+		if (siNumber != undefined && cns != undefined && cns > 0x01) {
 			siNumber = siNumber + cns * 100000;
 		}
 		return `${siNumber}`;
 	}
 	public startingAt(zerohour: number): SiDataFrame {
-		this.startTime = this.advanceTimePast(this.rawStartTime(), zerohour);
+		const rawStartTime = this.rawStartTime();
+		this.startTime = this.advanceTimePast(rawStartTime, zerohour);
 		this.checkTime = this.advanceTimePast(this.rawCheckTime(), zerohour);
 		let refTime = this.newRefTime(zerohour, this.startTime);
 		this.punches = this.computeShiftedPunches(refTime);
@@ -66,19 +71,22 @@ export class Si5DataFrame extends SiAbstractDataFrame {
 		return Math.min(punches.length, SI5_TIMED_PUNCHES);
 	}
 
-	protected rawNbPunches(): number {
-		return this.byteAt(0x17) - 1;
+	protected rawNbPunches(): number | undefined {
+		const byteAt = this.byteAt(0x17);
+		if (byteAt !== undefined) {
+			return byteAt - 1;
+		}
 	}
 
-	private rawStartTime(): number {
+	private rawStartTime(): number | undefined {
 		return this.timestampAt(0x13);
 	}
 
-	private rawFinishTime(): number {
+	private rawFinishTime(): number | undefined {
 		return this.timestampAt(0x15);
 	}
 
-	private rawCheckTime(): number {
+	private rawCheckTime(): number | undefined {
 		return this.timestampAt(0x19);
 	}
 

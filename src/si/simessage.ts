@@ -1,14 +1,14 @@
 /// <reference path="./serialport.d.ts" />
-import * as SerialPort from 'serialport';import { STX, ETX, SPORT_IDENT_VENDOR_ID, DEBUG_MAP, WAKEUP } from './codes';
-import { compute_crc } from './crc';
-import { SiPortId } from '../opensportident';
+import * as SerialPort from 'serialport';import { STX, ETX, SPORT_IDENT_VENDOR_ID, DEBUG_MAP, WAKEUP } from './codes.js';
+import { compute_crc } from './crc.js';
+import { SiPortId } from '../../opensportident.js';
 
 const BASE_MESSAGE_LENGTH = 6; // STX, opcode, length, ..., crc1, crc0, ETX
 
 export class SiMessage {
-    opcode: number;
+    opcode: number | undefined;
     /** payload is the binary message excluding leading STX, opcode, length, and trailing CRC & ETX  */
-    payload: Uint8Array;
+    payload: Uint8Array | undefined;
 }
 
 export function decodeWireMessage(data: Uint8Array): SiMessage | string {
@@ -63,7 +63,8 @@ export function toDebugString(buffer: Uint8Array): string {
     let ret = '';
     let index = 0;
     for (index = 0; index < buffer.length; index++) {
-        let code = DEBUG_MAP[buffer[index]];
+        let content = buffer[index];
+        let code = DEBUG_MAP[content];
         if (!code) {
             code = ` 0x${buffer[index].toString(16)}`;
         }
