@@ -90,4 +90,4 @@ export declare class SiPortReader {
  * List all the SPORTident station found on the computer (whether they are
  * already open by another application or not).
  */
-export declare function listSiPorts(cb: (err: string, ports: SiPortId[]) => void): void;
+export declare function listSiPorts(cb: (err: string, ports: SiPortId[]) => void): Promise<void>;

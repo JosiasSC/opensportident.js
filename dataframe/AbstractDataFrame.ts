@@ -7,15 +7,11 @@ import { SiDataFrame } from './SiDataFrame';
 import { SiPunch, NO_TIME, SiReadout } from '../opensportident';
 export abstract class AbstractDataFrame implements SiDataFrame {
 
-	protected siNumber: string;
-
-	protected checkTime: number;
-
-	protected startTime: number;
-
-	protected finishTime: number;
-
-	protected punches: SiPunch[];
+	protected siNumber: string = '';
+	protected checkTime: number = NO_TIME;
+	protected startTime: number = NO_TIME;
+	protected finishTime: number = NO_TIME;
+	protected punches: SiPunch[] = [];
 
 	abstract startingAt(zerohour: number): SiDataFrame;
 	abstract getSiSeries(): string;

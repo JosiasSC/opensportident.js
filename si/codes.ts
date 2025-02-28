@@ -75,7 +75,7 @@ export const BN_SICARD_10PLUS = [0, 4, 6, 7];
 export const BN_SICARD_6      = [0, 6, 7];
 export const BN_SICARD_6_192  = [0, 6, 7, 2, 3, 4, 5]; // 1 contains personal data, not punches
 
-export const DEBUG_MAP = {
+export const DEBUG_MAP: { [key: number]: string } = {
     0xFF: 'WAKEUP',
     0x02: 'STX',
     0x03: 'ETX',
@@ -92,4 +92,4 @@ export const DEBUG_MAP = {
     0xB1: 'GET_SI_CARD_5',
     0xE1: 'GET_SI_CARD_6_BN',
     0xEF: 'GET_SI_CARD_8_PLUS_BN'
-}
+};

@@ -8,12 +8,12 @@ export interface SiPunch {
 	timestampMs: number;
 }
 export class SiReadout {
-	siCardSeries: string;
-	siCardNumber: string;
-	checkTimestampMs: number;
-	startTimestampMs: number;
-	finishTimestampMs: number;
-	punches: SiPunch[];
+	siCardSeries: string = '';
+	siCardNumber: string = '';
+	checkTimestampMs: number = NO_TIME;
+	startTimestampMs: number = NO_TIME;
+	finishTimestampMs: number = NO_TIME;
+	punches: SiPunch[] = [];
 
 	toDebugString(): string {
 		const start = this.formatTime(this.startTimestampMs);

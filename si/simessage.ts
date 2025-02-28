@@ -1,14 +1,13 @@
-/// <reference path="./serialport.d.ts" />
-import * as SerialPort from 'serialport';import { STX, ETX, SPORT_IDENT_VENDOR_ID, DEBUG_MAP, WAKEUP } from './codes';
+import { STX, ETX, SPORT_IDENT_VENDOR_ID, DEBUG_MAP, WAKEUP } from './codes';
 import { compute_crc } from './crc';
 import { SiPortId } from '../opensportident';
 
 const BASE_MESSAGE_LENGTH = 6; // STX, opcode, length, ..., crc1, crc0, ETX
 
 export class SiMessage {
-    opcode: number;
+    opcode: number = 0;
     /** payload is the binary message excluding leading STX, opcode, length, and trailing CRC & ETX  */
-    payload: Uint8Array;
+    payload: Uint8Array = new Uint8Array();
 }
 
 export function decodeWireMessage(data: Uint8Array): SiMessage | string {

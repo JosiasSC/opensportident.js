@@ -1,6 +1,6 @@
-/// <reference path="./serialport.d.ts" />
-import * as SerialPort from 'serialport';
-import * as moment from 'moment';
+import {SerialPort} from 'serialport';
+import { PortInfo } from '@serialport/bindings-interface';
+import moment from 'moment';
 import { EventEmitter } from 'events';
 
 import {
@@ -30,14 +30,14 @@ export class SiPortReader {
     private port: SerialPort;
     private options: SiPortOptions;
     private eventEmitter: EventEmitter;
-    private receivedOpcodeMap: Map<number, (WireMessage) => void> = new Map();
-    private si6CardBlocks: number[];
+    private receivedOpcodeMap: Map<number, (WireMessage: any) => void> = new Map();
+    private si6CardBlocks: number[] = [];
     private baudRate: number;
 
-    private isSiCard10Plus: boolean;
-    private isSiCard6Star: boolean;
-    private temp: SiMessage[];
-    private readCompleted: boolean;
+    private isSiCard10Plus: boolean = false;
+    private isSiCard6Star: boolean = false;
+    private temp: SiMessage[] = [];
+    private readCompleted: boolean = false;
 
     constructor(portName: string, options?: SiPortOptions) {
         this.options = options || {};
@@ -46,7 +46,8 @@ export class SiPortReader {
         }
         this.eventEmitter = new EventEmitter();
         this.baudRate = 38400; // TODO: add 4800 in case of failure
-        this.port = new SerialPort(portName, {
+        this.port = new SerialPort({
+            path: portName, 
             baudRate: this.baudRate,
             autoOpen: false
         });
@@ -55,32 +56,32 @@ export class SiPortReader {
         this.port.on('data', data => this.onDataReceived(data));
         this.port.on('open', () => this.send(MSG_STARTUP_SEQUENCE));
 
-        this.receivedOpcodeMap[SET_MASTER_MODE] = m => this.readConfig();
-        this.receivedOpcodeMap[GET_SYSTEM_VALUE] = m => this.onConfig(m);
+        this.receivedOpcodeMap.set(SET_MASTER_MODE, (m: any) => this.readConfig());
+        this.receivedOpcodeMap.set(GET_SYSTEM_VALUE, (m: any) => this.onConfig(m));
 
-        this.receivedOpcodeMap[BEEP] = () => {};
-        this.receivedOpcodeMap[SI_CARD_REMOVED] = () => this.onSiCardRemoved();
+        this.receivedOpcodeMap.set(BEEP, () => {});
+        this.receivedOpcodeMap.set(SI_CARD_REMOVED, () => this.onSiCardRemoved());
 
-        this.receivedOpcodeMap[SI_CARD_5_DETECTED] = (m) => this.onSiCardDetected(m);
-        this.receivedOpcodeMap[GET_SI_CARD_5] = m => this.onSiCard5(m);
+        this.receivedOpcodeMap.set(SI_CARD_5_DETECTED, (m: any) => this.onSiCardDetected(m));
+        this.receivedOpcodeMap.set(GET_SI_CARD_5, (m: any) => this.onSiCard5(m));
 
-        this.receivedOpcodeMap[SI_CARD_6_PLUS_DETECTED] = (m) => this.onSiCardDetected(m);
-        this.receivedOpcodeMap[GET_SI_CARD_6_BN] = m => this.onSiCard6(m);
+        this.receivedOpcodeMap.set(SI_CARD_6_PLUS_DETECTED, (m: any) => this.onSiCardDetected(m));
+        this.receivedOpcodeMap.set(GET_SI_CARD_6_BN, (m: any) => this.onSiCard6(m));
 
-        this.receivedOpcodeMap[SI_CARD_8_PLUS_DETECTED] = (m) => this.onSiCardDetected(m);
-        this.receivedOpcodeMap[GET_SI_CARD_8_PLUS_BN] = m => this.onSiCard8Plus(m);
+        this.receivedOpcodeMap.set(SI_CARD_8_PLUS_DETECTED, (m: any) => this.onSiCardDetected(m));
+        this.receivedOpcodeMap.set(GET_SI_CARD_8_PLUS_BN, (m: any) => this.onSiCard8Plus(m));
     }
 
     public on(event: SiEvent, listener: Function): void {
-        this.eventEmitter.on(event, listener);
+        this.eventEmitter.on(event, listener as (...args: any[]) => void);
     }
 
     public once(event: SiEvent, listener: Function): void {
-        this.eventEmitter.once(event, listener);
+        this.eventEmitter.once(event, listener as (...args: any[]) => void);
     }
 
     public removeListener(event: SiEvent, listener: Function): void {
-        this.eventEmitter.removeListener(event, listener);
+        this.eventEmitter.removeListener(event, listener as (...args: any[]) => void);
     }
 
     public open() {
@@ -145,12 +146,12 @@ export class SiPortReader {
 
         if (this.temp.length < expectedBlocks.length) {
             let bn = expectedBlocks[this.temp.length];
-            this.send(buildWireMessage(opcode, bn));
+            this.send(buildWireMessage(opcode ?? 0, bn as number));
         }
         else if (!this.readCompleted) {
             this.readCompleted = true;
             this.beep(1);
-            let frame = frameBuilder(this.temp).startingAt(this.options.timeZero);
+            let frame = frameBuilder(this.temp).startingAt(this.options.timeZero ?? 0);
             this.emit('readout', frame.extract());
         }
     }
@@ -159,7 +160,7 @@ export class SiPortReader {
         if (!this.readCompleted) {
             this.readCompleted = true;
             this.beep(1);
-            let frame = new Si5DataFrame(received).startingAt(this.options.timeZero);
+            let frame = new Si5DataFrame(received).startingAt(this.options.timeZero ?? 0);
             this.emit('readout', frame.extract());
         }
     }
@@ -235,7 +236,7 @@ export class SiPortReader {
         else {
             let msg = decodeWireMessage(data);
             if (msg instanceof SiMessage) {
-                const next = this.receivedOpcodeMap[msg.opcode];
+                const next = this.receivedOpcodeMap.get(msg.opcode);
                 if (next) {
                     next(msg);
                 }
@@ -251,10 +252,16 @@ export class SiPortReader {
 }
 
 
-export function listSiPorts(cb: (err: string, ports: SiPortId[]) => void): void {
-    SerialPort.list((err, ports) => {
-        if (err) cb(err, null)
-        let p = ports.filter(conf => conf.vendorId === SPORT_IDENT_VENDOR_ID);
-        cb(null, p);
-    })
+export async function listSiPorts(cb: (err: string | null, ports: SiPortId[]) => void): Promise<void> {
+    try {
+        const ar = (await SerialPort.list()).filter((conf: PortInfo) => conf.vendorId === SPORT_IDENT_VENDOR_ID).map((conf: PortInfo) => {
+            return {
+                comName: conf.path,
+                serialNumber: conf.serialNumber ?? ''
+            } as SiPortId;
+        });
+        cb(null, ar as SiPortId[]);
+    } catch (err: any) {
+        cb(err.toString(), []);
+    }
 }

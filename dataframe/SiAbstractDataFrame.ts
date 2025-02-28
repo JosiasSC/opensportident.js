@@ -7,7 +7,7 @@ export const NO_SI_TIME = 1000 * 0xEEEE;
 export const TWELVE_HOURS = 1000 * 12 * 3600;
 export const ONE_DAY = 2 * TWELVE_HOURS;
 export abstract class SiAbstractDataFrame extends AbstractDataFrame {
-	protected dataFrame: Uint8Array;
+	protected dataFrame: Uint8Array = new Uint8Array();
 
 	protected byteAt(i: number): number {
 		return this.dataFrame[i];
