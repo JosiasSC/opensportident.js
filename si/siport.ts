@@ -254,7 +254,9 @@ export class SiPortReader {
 
 export async function listSiPorts(cb: (err: string | null, ports: SiPortId[]) => void): Promise<void> {
     try {
-        const ar = (await SerialPort.list()).filter((conf: PortInfo) => conf.vendorId === SPORT_IDENT_VENDOR_ID).map((conf: PortInfo) => {
+        const ports = await SerialPort.list();
+        // console.log(ports);
+        const ar = ports.filter((conf: PortInfo) => conf.vendorId === SPORT_IDENT_VENDOR_ID).map((conf: PortInfo) => {
             return {
                 comName: conf.path,
                 serialNumber: conf.serialNumber ?? ''

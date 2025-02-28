@@ -1,4 +1,4 @@
-export const SPORT_IDENT_VENDOR_ID = "0x10c4";
+export const SPORT_IDENT_VENDOR_ID = "10c4";
 
 /*
  * Basic protocol instructions
