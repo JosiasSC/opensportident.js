@@ -1,8 +1,6 @@
 /**
  * Copyright (c) 2013 Simon Denier
  */
-import * as moment from 'moment';
-
 import { SiDataFrame } from './SiDataFrame';
 import { SiPunch, NO_TIME, SiReadout } from '../opensportident';
 export abstract class AbstractDataFrame implements SiDataFrame {

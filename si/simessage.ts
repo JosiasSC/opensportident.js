@@ -1,6 +1,5 @@
 import { STX, ETX, SPORT_IDENT_VENDOR_ID, DEBUG_MAP, WAKEUP } from './codes';
 import { compute_crc } from './crc';
-import { SiPortId } from '../opensportident';
 
 const BASE_MESSAGE_LENGTH = 6; // STX, opcode, length, ..., crc1, crc0, ETX
 

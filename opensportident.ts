@@ -1,5 +1,4 @@
-import * as moment from 'moment';
-import { listSiPorts } from './si/siport';
+import moment from 'moment';
 
 export const NO_TIME = -1;
 
