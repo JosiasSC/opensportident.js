@@ -2,7 +2,7 @@
   "name": "opensportident",
   "typings": "opensportident.d.ts",
   "main": "opensportident.js",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "description": "Open SPORTident(tm) JavaScript library",
   "bin": {
     "opensportident": "./example.js"
